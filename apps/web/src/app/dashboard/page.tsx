@@ -55,10 +55,15 @@ export default function EventsDashboard() {
                     imageRendering: 'pixelated'
                 }}
             />
-            
-            {/* Neon Green Glow - Top Center Only */}
+    
+            {/* Blue Blur Gradient - Bottom Right */}
             <div 
-                className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[200px] bg-green-400/15 blur-[80px] rounded-full"
+                className="absolute bottom-20 right-20 w-[600px] h-[300px] bg-blue-500/10 blur-[100px] rounded-full"
+            />
+
+            {/* Blue Blur Gradient - Left Side */}
+            <div 
+                className="absolute top-1/2 left-10 w-[400px] h-[400px] bg-blue-400/10 blur-[90px] rounded-full"
             />
 
             {/* Content */}
