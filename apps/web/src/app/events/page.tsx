@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
     Card,
     CardContent,
@@ -18,87 +19,23 @@ import {
 } from "@/components/ui/select";
 import { Calendar, MapPin, Users, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { eventsData } from "@/lib/data/events";
 
 export default function EventsPage() {
+    const router = useRouter();
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("all");
 
-    const events = [
-        {
-            id: 1,
-            name: "Tech Talk: AI & Future",
-            club: "Computer Club",
-            category: "Technical",
-            date: "Dec 22, 2024",
-            time: "3:00 PM - 5:00 PM",
-            location: "Auditorium Hall",
-            attendees: 120,
-            maxAttendees: 150,
-            description: "Explore the latest trends in AI and machine learning.",
-        },
-        {
-            id: 2,
-            name: "Cultural Night",
-            club: "Arts Club",
-            category: "Cultural",
-            date: "Dec 25, 2024",
-            time: "6:00 PM - 9:00 PM",
-            location: "Main Ground",
-            attendees: 85,
-            maxAttendees: 200,
-            description: "An evening of music, dance, and cultural performances.",
-        },
-        {
-            id: 3,
-            name: "Robotics Workshop",
-            club: "Mech Club",
-            category: "Technical",
-            date: "Dec 28, 2024",
-            time: "10:00 AM - 4:00 PM",
-            location: "Lab 3",
-            attendees: 60,
-            maxAttendees: 80,
-            description: "Hands-on workshop on building autonomous robots.",
-        },
-        {
-            id: 4,
-            name: "Photography Walk",
-            club: "Media Club",
-            category: "Arts",
-            date: "Jan 2, 2025",
-            time: "7:00 AM - 10:00 AM",
-            location: "Campus Tour",
-            attendees: 42,
-            maxAttendees: 50,
-            description: "Capture the beauty of campus at sunrise.",
-        },
-        {
-            id: 5,
-            name: "Startup Pitching",
-            club: "Entrepreneurship Cell",
-            category: "Business",
-            date: "Jan 5, 2025",
-            time: "2:00 PM - 6:00 PM",
-            location: "Conference Room",
-            attendees: 90,
-            maxAttendees: 100,
-            description: "Present your startup ideas to investors and mentors.",
-        },
-        {
-            id: 6,
-            name: "Sports Tournament",
-            club: "Sports Committee",
-            category: "Sports",
-            date: "Jan 8, 2025",
-            time: "9:00 AM - 5:00 PM",
-            location: "Sports Complex",
-            attendees: 150,
-            maxAttendees: 200,
-            description: "Annual inter-department sports competition.",
-        },
-    ];
+    const events = eventsData;
 
-    const categories = ["all", "Technical", "Cultural", "Arts", "Business", "Sports"];
+    const categories = [
+        "all",
+        "Technical",
+        "Cultural",
+        "Arts",
+        "Business",
+        "Sports",
+    ];
 
     const filteredEvents = events.filter((event) => {
         const matchesSearch =
@@ -178,6 +115,9 @@ export default function EventsPage() {
                         <Card
                             key={event.id}
                             className="backdrop-blur-sm bg-background/95 transition-all duration-300 hover:-translate-y-2 hover:shadow-lg hover:shadow-blue-500/20 cursor-pointer"
+                            onClick={() =>
+                                router.push(`/events/${event.id}` as any)
+                            }
                         >
                             <CardHeader>
                                 <div className="flex items-start justify-between">
@@ -212,12 +152,21 @@ export default function EventsPage() {
                                     <div className="flex items-center text-sm">
                                         <Users className="h-4 w-4 mr-2 text-muted-foreground" />
                                         <span>
-                                            {event.attendees}/{event.maxAttendees} registered
+                                            {event.attendees}/
+                                            {event.maxAttendees} registered
                                         </span>
                                     </div>
                                 </div>
-                                <Button className="w-full bg-blue-500 hover:bg-blue-600 text-white">
-                                    Register Now
+                                <Button
+                                    className="w-full bg-blue-500 hover:bg-blue-600 text-white"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        router.push(
+                                            `/events/${event.id}` as any,
+                                        );
+                                    }}
+                                >
+                                    View Details
                                 </Button>
                             </CardContent>
                         </Card>
@@ -235,5 +184,3 @@ export default function EventsPage() {
         </div>
     );
 }
-
-
