@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import {
     Card,
@@ -8,40 +8,48 @@ import {
     CardDescription,
     CardHeader,
     CardTitle,
-    CardFooter,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
     Calendar,
     MapPin,
     Users,
     Clock,
-    Award,
-    Share2,
-    Bookmark,
-    ArrowLeft,
-    Check,
     Mail,
     Phone,
-    Globe,
-    Heart,
-    Star,
-    MessageSquare,
+    Check,
+    ArrowLeft,
+    Share2,
 } from "lucide-react";
 import { getEventById } from "@/lib/data/events";
+import PageRenderer from "@/components/page-builder/page-renderer";
+import { PageDesign } from "@/lib/types/page-builder";
 
 export default function EventDetailPage() {
     const params = useParams();
     const router = useRouter();
     const [isRegistered, setIsRegistered] = useState(false);
-    const [isSaved, setIsSaved] = useState(false);
+    const [customPageDesign, setCustomPageDesign] = useState<PageDesign | null>(null);
 
     // Get event data from shared events data
     const event = getEventById(Number(params.id));
+
+    // Load custom page design from your database/API
+    useEffect(() => {
+        // TODO: Fetch from your database based on event ID
+        // For now, check localStorage for demo purposes
+        const savedDesign = localStorage.getItem(`event-design-${params.id}`);
+        if (savedDesign) {
+            try {
+                setCustomPageDesign(JSON.parse(savedDesign));
+            } catch (error) {
+                console.error('Failed to parse custom design', error);
+            }
+        }
+    }, [params.id]);
 
     // If event not found, show error
     if (!event) {
@@ -65,12 +73,7 @@ export default function EventDetailPage() {
         setIsRegistered(!isRegistered);
     };
 
-    const handleSave = () => {
-        setIsSaved(!isSaved);
-    };
-
     const handleShare = () => {
-        // Implement share functionality
         if (navigator.share) {
             navigator.share({
                 title: event.name,
@@ -131,16 +134,6 @@ export default function EventDetailPage() {
                                             <Badge variant="outline">
                                                 {event.category}
                                             </Badge>
-                                            <div className="flex items-center text-sm text-muted-foreground">
-                                                <Star className="h-3 w-3 mr-1 fill-yellow-500 text-yellow-500" />
-                                                <span className="font-medium">
-                                                    {event.rating}
-                                                </span>
-                                                <span className="mx-1">•</span>
-                                                <span>
-                                                    {event.reviews} reviews
-                                                </span>
-                                            </div>
                                         </div>
                                         <CardTitle className="text-3xl">
                                             {event.name}
@@ -150,20 +143,6 @@ export default function EventDetailPage() {
                                         </CardDescription>
                                     </div>
                                     <div className="flex gap-2">
-                                        <Button
-                                            variant="outline"
-                                            size="icon"
-                                            onClick={handleSave}
-                                            className={
-                                                isSaved
-                                                    ? "text-red-500 border-red-500"
-                                                    : ""
-                                            }
-                                        >
-                                            <Heart
-                                                className={`h-4 w-4 ${isSaved ? "fill-red-500" : ""}`}
-                                            />
-                                        </Button>
                                         <Button
                                             variant="outline"
                                             size="icon"
@@ -232,8 +211,7 @@ export default function EventDetailPage() {
                                                 Attendees
                                             </p>
                                             <p className="font-medium">
-                                                {event.attendees}/
-                                                {event.maxAttendees}
+                                                {event.attendees}/{event.maxAttendees}
                                             </p>
                                         </div>
                                     </div>
@@ -261,237 +239,17 @@ export default function EventDetailPage() {
                             </CardContent>
                         </Card>
 
-                        {/* Tabs Section */}
-                        <Card className="backdrop-blur-sm bg-background/95">
-                            <CardContent className="pt-6">
-                                <Tabs defaultValue="about">
-                                    <TabsList>
-                                        <TabsTrigger value="about">
-                                            About
-                                        </TabsTrigger>
-                                        <TabsTrigger value="schedule">
-                                            Schedule
-                                        </TabsTrigger>
-                                        <TabsTrigger value="speakers">
-                                            Speakers
-                                        </TabsTrigger>
-                                        <TabsTrigger value="reviews">
-                                            Reviews
-                                        </TabsTrigger>
-                                    </TabsList>
-
-                                    <TabsContent
-                                        value="about"
-                                        className="space-y-6 mt-6"
-                                    >
-                                        <div>
-                                            <h3 className="text-lg font-semibold mb-3">
-                                                About This Event
-                                            </h3>
-                                            <p className="text-muted-foreground leading-relaxed">
-                                                {event.longDescription}
-                                            </p>
-                                        </div>
-
-                                        <Separator />
-
-                                        <div>
-                                            <h3 className="text-lg font-semibold mb-3">
-                                                Requirements
-                                            </h3>
-                                            <ul className="space-y-2">
-                                                {event.requirements.map(
-                                                    (req, index) => (
-                                                        <li
-                                                            key={index}
-                                                            className="flex items-start gap-2"
-                                                        >
-                                                            <Check className="h-5 w-5 text-green-500 mt-0.5" />
-                                                            <span className="text-muted-foreground">
-                                                                {req}
-                                                            </span>
-                                                        </li>
-                                                    ),
-                                                )}
-                                            </ul>
-                                        </div>
-
-                                        <Separator />
-
-                                        <div>
-                                            <h3 className="text-lg font-semibold mb-3">
-                                                What You'll Get
-                                            </h3>
-                                            <div className="grid gap-3 sm:grid-cols-2">
-                                                {event.perks.map(
-                                                    (perk, index) => (
-                                                        <div
-                                                            key={index}
-                                                            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50"
-                                                        >
-                                                            <Award className="h-4 w-4 text-blue-500" />
-                                                            <span className="text-sm">
-                                                                {perk}
-                                                            </span>
-                                                        </div>
-                                                    ),
-                                                )}
-                                            </div>
-                                        </div>
-
-                                        <Separator />
-
-                                        <div>
-                                            <h3 className="text-lg font-semibold mb-3">
-                                                Tags
-                                            </h3>
-                                            <div className="flex flex-wrap gap-2">
-                                                {event.tags.map(
-                                                    (tag, index) => (
-                                                        <Badge
-                                                            key={index}
-                                                            variant="secondary"
-                                                        >
-                                                            {tag}
-                                                        </Badge>
-                                                    ),
-                                                )}
-                                            </div>
-                                        </div>
-                                    </TabsContent>
-
-                                    <TabsContent
-                                        value="schedule"
-                                        className="space-y-4 mt-6"
-                                    >
-                                        <h3 className="text-lg font-semibold">
-                                            Event Schedule
-                                        </h3>
-                                        <div className="space-y-4">
-                                            {event.schedule.map(
-                                                (item, index) => (
-                                                    <div
-                                                        key={index}
-                                                        className="flex gap-4 p-4 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
-                                                    >
-                                                        <div className="flex-shrink-0">
-                                                            <div className="h-12 w-12 rounded-full bg-blue-500/10 flex items-center justify-center border border-blue-500/20">
-                                                                <Clock className="h-5 w-5 text-blue-500" />
-                                                            </div>
-                                                        </div>
-                                                        <div className="flex-1">
-                                                            <p className="font-medium">
-                                                                {item.time}
-                                                            </p>
-                                                            <p className="text-muted-foreground text-sm">
-                                                                {item.activity}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                ),
-                                            )}
-                                        </div>
-                                    </TabsContent>
-
-                                    <TabsContent
-                                        value="speakers"
-                                        className="space-y-4 mt-6"
-                                    >
-                                        <h3 className="text-lg font-semibold">
-                                            Featured Speakers
-                                        </h3>
-                                        {event.speakers.length > 0 ? (
-                                            <div className="space-y-4">
-                                                {event.speakers.map(
-                                                    (speaker, index) => (
-                                                        <Card
-                                                            key={index}
-                                                            className="p-4"
-                                                        >
-                                                            <div className="flex items-start gap-4">
-                                                                <Avatar className="h-16 w-16">
-                                                                    <AvatarImage
-                                                                        src={
-                                                                            speaker.avatar
-                                                                        }
-                                                                    />
-                                                                    <AvatarFallback>
-                                                                        {speaker.name
-                                                                            .split(
-                                                                                " ",
-                                                                            )
-                                                                            .map(
-                                                                                (
-                                                                                    n,
-                                                                                ) =>
-                                                                                    n[0],
-                                                                            )
-                                                                            .join(
-                                                                                "",
-                                                                            )}
-                                                                    </AvatarFallback>
-                                                                </Avatar>
-                                                                <div className="flex-1">
-                                                                    <h4 className="font-semibold">
-                                                                        {
-                                                                            speaker.name
-                                                                        }
-                                                                    </h4>
-                                                                    <p className="text-sm text-muted-foreground">
-                                                                        {
-                                                                            speaker.title
-                                                                        }
-                                                                    </p>
-                                                                    <p className="text-sm mt-2">
-                                                                        <span className="font-medium">
-                                                                            Topic:
-                                                                        </span>{" "}
-                                                                        {
-                                                                            speaker.topic
-                                                                        }
-                                                                    </p>
-                                                                </div>
-                                                            </div>
-                                                        </Card>
-                                                    ),
-                                                )}
-                                            </div>
-                                        ) : (
-                                            <p className="text-muted-foreground text-center py-8">
-                                                Speaker information coming soon
-                                            </p>
-                                        )}
-                                    </TabsContent>
-
-                                    <TabsContent
-                                        value="reviews"
-                                        className="space-y-4 mt-6"
-                                    >
-                                        <div className="flex items-center justify-between">
-                                            <h3 className="text-lg font-semibold">
-                                                Reviews & Ratings
-                                            </h3>
-                                            <div className="flex items-center gap-2">
-                                                <Star className="h-5 w-5 fill-yellow-500 text-yellow-500" />
-                                                <span className="font-semibold text-lg">
-                                                    {event.rating}
-                                                </span>
-                                                <span className="text-muted-foreground text-sm">
-                                                    ({event.reviews} reviews)
-                                                </span>
-                                            </div>
-                                        </div>
-                                        <div className="text-center py-8 text-muted-foreground">
-                                            <MessageSquare className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                                            <p>
-                                                Reviews will be available after
-                                                the event
-                                            </p>
-                                        </div>
-                                    </TabsContent>
-                                </Tabs>
-                            </CardContent>
-                        </Card>
+                        {/* CUSTOM PAGE CONTENT RENDERED HERE */}
+                        {customPageDesign && (
+                            <Card className="backdrop-blur-sm bg-background/95">
+                                <CardHeader>
+                                    <CardTitle>Event Details</CardTitle>
+                                </CardHeader>
+                                <CardContent>
+                                    <PageRenderer design={customPageDesign} />
+                                </CardContent>
+                            </Card>
+                        )}
                     </div>
 
                     {/* Sidebar - Right Side */}
@@ -533,8 +291,7 @@ export default function EventDetailPage() {
                                         </div>
                                         {spotsLeft <= 10 && (
                                             <p className="text-sm text-orange-600">
-                                                ⚠️ Only {spotsLeft} spots
-                                                remaining!
+                                                ⚠️ Only {spotsLeft} spots remaining!
                                             </p>
                                         )}
                                     </div>
@@ -558,8 +315,7 @@ export default function EventDetailPage() {
 
                                 {!isRegistered && (
                                     <p className="text-xs text-muted-foreground text-center">
-                                        Registration closes 1 hour before the
-                                        event
+                                        Registration closes 1 hour before the event
                                     </p>
                                 )}
                             </CardContent>
@@ -575,9 +331,7 @@ export default function EventDetailPage() {
                             <CardContent className="space-y-4">
                                 <div className="flex items-center gap-3">
                                     <Avatar className="h-14 w-14">
-                                        <AvatarImage
-                                            src={event.organizer.avatar}
-                                        />
+                                        <AvatarImage src={event.organizer.avatar} />
                                         <AvatarFallback>
                                             {event.organizer.name
                                                 .split(" ")
@@ -616,44 +370,6 @@ export default function EventDetailPage() {
                                 <Button variant="outline" className="w-full">
                                     Contact Organizer
                                 </Button>
-                            </CardContent>
-                        </Card>
-
-                        {/* Share Card */}
-                        <Card className="backdrop-blur-sm bg-background/95">
-                            <CardHeader>
-                                <CardTitle className="text-lg">
-                                    Share Event
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent className="space-y-3">
-                                <p className="text-sm text-muted-foreground">
-                                    Spread the word about this event
-                                </p>
-                                <div className="flex gap-2">
-                                    <Button
-                                        variant="outline"
-                                        size="icon"
-                                        className="flex-1"
-                                    >
-                                        <Globe className="h-4 w-4" />
-                                    </Button>
-                                    <Button
-                                        variant="outline"
-                                        size="icon"
-                                        className="flex-1"
-                                    >
-                                        <Mail className="h-4 w-4" />
-                                    </Button>
-                                    <Button
-                                        variant="outline"
-                                        size="icon"
-                                        className="flex-1"
-                                        onClick={handleShare}
-                                    >
-                                        <Share2 className="h-4 w-4" />
-                                    </Button>
-                                </div>
                             </CardContent>
                         </Card>
                     </div>
