@@ -1,7 +1,11 @@
 {
     "$schema": "./node_modules/wrangler/config-schema.json",
     "main": ".open-next/worker.js",
-  "name": "eventsync-web",
+    "name": "eventsync-web",
+    "vars": {
+        "NODE_ENV": "production",
+        "NEXT_PUBLIC_SERVER_URL": "https://eventsync-server.shrivatsav-dev-f8d.workers.dev",
+    },
     "compatibility_date": "2025-07-05",
     "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
     "assets": {
