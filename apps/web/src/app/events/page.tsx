@@ -146,7 +146,7 @@ export default function EventsPage() {
 
                 {/* Search and Filter Section */}
                 <div className="flex flex-col sm:flex-row gap-4">
-                    <div className="relative flex-[3]">
+                    <div className="relative flex-1">
                         <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                         <Input
                             placeholder="Search events, clubs, or keywords..."
@@ -159,13 +159,13 @@ export default function EventsPage() {
                         value={selectedCategory}
                         onValueChange={setSelectedCategory}
                     >
-                        <SelectTrigger className="w-full sm:w-[160px] backdrop-blur-sm bg-background/95">
+                        <SelectTrigger className="w-[140px] backdrop-blur-sm bg-background/95">
                             <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
                             {categories.map((category) => (
                                 <SelectItem key={category} value={category}>
-                                    {category === "all" ? "All Categories" : category}
+                                    {category === "all" ? "All" : category}
                                 </SelectItem>
                             ))}
                         </SelectContent>

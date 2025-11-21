@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Box } from "lucide-react";
 import SignIn from "./sign-in-form";
@@ -12,260 +12,238 @@ type AuthMode = "signin" | "signup";
 type SignUpStep = "form" | "verification";
 
 interface AuthLayoutProps {
-    initialMode?: AuthMode;
+  initialMode?: AuthMode;
 }
 
 export function AuthLayout({ initialMode = "signin" }: AuthLayoutProps = {}) {
-    const router = useRouter();
-    const [mode, setMode] = useState<AuthMode>(initialMode);
-    const [signUpStep, setSignUpStep] = useState<SignUpStep>("form");
-    const [signUpEmail, setSignUpEmail] = useState("");
+  const router = useRouter();
+  const [mode, setMode] = useState<AuthMode>(initialMode);
+  const [signUpStep, setSignUpStep] = useState<SignUpStep>("form");
+  const [signUpEmail, setSignUpEmail] = useState("");
+  const [isMounted, setIsMounted] = useState(false);
 
-    const handleSignIn = (data: { email: string; password: string }) => {
-        console.log("Sign in:", data);
-        router.push("/onboarding");
-    };
+  const handleSignIn = (data: { email: string; password: string }) => {
+    console.log("Sign in:", data);
+    router.push("/onboarding");
+  };
 
-    const handleSignUp = (data: {
-        name: string;
-        email: string;
-        password: string;
-        confirmPassword: string;
-    }) => {
-        console.log("Sign up:", data);
-        // Store email and move to verification step
-        setSignUpEmail(data.email);
-        setSignUpStep("verification");
-        // TODO: Send verification email to backend
-    };
+  const handleSignUp = (data: {
+    name: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+  }) => {
+    console.log("Sign up:", data);
+    setSignUpEmail(data.email);
+    setSignUpStep("verification");
+  };
 
-    const handleEmailVerification = (code: string) => {
-        console.log("Verification code:", code);
-        // TODO: Verify code with backend
-        router.push("/onboarding");
-    };
+  const handleEmailVerification = (code: string) => {
+    console.log("Verification code:", code);
+    router.push("/onboarding");
+  };
 
-    const handleBackToSignUp = () => {
-        setSignUpStep("form");
-    };
+  const handleBackToSignUp = () => {
+    setSignUpStep("form");
+  };
 
-    const handleResendCode = async () => {
-        console.log("Resending verification code to:", signUpEmail);
-        // TODO: Resend verification email
-        return Promise.resolve();
-    };
+  const handleResendCode = async () => {
+    console.log("Resending verification code to:", signUpEmail);
+    return Promise.resolve();
+  };
 
-    const handleGoogleAuth = () => {
-        console.log(mode === "signin" ? "Google sign-in" : "Google sign-up");
-        router.push("/onboarding");
-    };
+  const handleGoogleAuth = () => {
+    console.log(mode === "signin" ? "Google sign-in" : "Google sign-up");
+    router.push("/onboarding");
+  };
 
-    return (
-        <div className="min-h-screen bg-background flex">
-            {/* Left Panel - Auth Form */}
-            <div className="w-full flex items-center justify-center p-6 lg:p-12 overflow-y-auto scrollbar-hide">
-                <div className="w-full max-w-md">
-                    {/* Logo & Header */}
-                    <div className="mb-8">
-                        <div className="flex items-center gap-3 mb-6">
-                            <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
-                                <Box className="w-7 h-7 text-primary-foreground" />
-                            </div>
-                            <div>
-                                <h1 className="text-2xl font-bold text-foreground">
-                                    EventSync
-                                </h1>
-                                <p className="text-sm text-muted-foreground transition-opacity duration-200">
-                                    {mode === "signin"
-                                        ? "Welcome back"
-                                        : "Create your account"}
-                                </p>
-                            </div>
-                        </div>
+  // Generate stable animation values once on client side only
+  const [animationData] = useState(() =>
+    [...Array(8)].map(() => ({
+      size: 100 + Math.random() * 200,
+      left: Math.random() * 100,
+      top: Math.random() * 100,
+      duration: 15 + Math.random() * 15,
+      delay: Math.random() * -20,
+    })),
+  );
 
-                        {signUpStep === "form" && (
-                            <div>
-                                <h2 className="text-2xl font-bold text-foreground mb-2 transition-opacity duration-200">
-                                    {mode === "signin"
-                                        ? "Sign in to your account"
-                                        : "Start your journey"}
-                                </h2>
-                                <p className="text-sm text-muted-foreground transition-opacity duration-200">
-                                    {mode === "signin"
-                                        ? "Continue your journey with us"
-                                        : "Join us and bring your ideas to life"}
-                                </p>
-                            </div>
-                        )}
-                    </div>
+  // Only render animations after mount to prevent hydration mismatch
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
-                    {/* Toggle between Sign In and Sign Up - Hide during verification */}
-                    {signUpStep === "form" && (
-                        <div className="flex gap-2 p-1 bg-muted/20 rounded-lg mb-6">
-                            <button
-                                type="button"
-                                onClick={() => setMode("signin")}
-                                className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all duration-200 ${
-                                    mode === "signin"
-                                        ? "bg-background text-foreground shadow-sm"
-                                        : "text-muted-foreground hover:text-foreground"
-                                }`}
-                            >
-                                Sign In
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => setMode("signup")}
-                                className={`flex-1 py-2 px-4 rounded-md text-sm font-medium transition-all duration-200 ${
-                                    mode === "signup"
-                                        ? "bg-background text-foreground shadow-sm"
-                                        : "text-muted-foreground hover:text-foreground"
-                                }`}
-                            >
-                                Sign Up
-                            </button>
-                        </div>
-                    )}
+  return (
+    <div className="min-h-screen bg-background flex relative overflow-hidden">
+      {/* Subtle Animated Background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {/* Gradient Mesh */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-blue-500/5" />
+        <div className="absolute inset-0 bg-gradient-to-tl from-purple-500/5 via-transparent to-transparent" />
 
-                    {/* Forms Container */}
-                    <div className="relative">
-                        {/* Sign In Form */}
-                        <div
-                            className={`transition-all duration-200 ${
-                                mode === "signin" && signUpStep === "form"
-                                    ? "opacity-100 visible relative"
-                                    : "opacity-0 invisible absolute top-0 left-0 right-0 pointer-events-none"
-                            }`}
-                        >
-                            <SignIn />
-                        </div>
+        {/* Floating Orbs */}
+        {isMounted &&
+          animationData.map((data, i) => (
+            <div
+              key={i}
+              className="absolute rounded-full"
+              style={{
+                left: `${data.left}%`,
+                top: `${data.top}%`,
+                width: `${data.size}px`,
+                height: `${data.size}px`,
+                background: `radial-gradient(circle, ${
+                  i % 3 === 0
+                    ? "rgba(99, 102, 241, 0.1)"
+                    : i % 3 === 1
+                      ? "rgba(168, 85, 247, 0.08)"
+                      : "rgba(59, 130, 246, 0.08)"
+                } 0%, transparent 70%)`,
+                filter: "blur(40px)",
+                animation: `float ${data.duration}s ease-in-out infinite`,
+                animationDelay: `${data.delay}s`,
+              }}
+            />
+          ))}
 
-                        {/* Sign Up Form */}
-                        <div
-                            className={`transition-all duration-200 ${
-                                mode === "signup" && signUpStep === "form"
-                                    ? "opacity-100 visible relative"
-                                    : "opacity-0 invisible absolute top-0 left-0 right-0 pointer-events-none"
-                            }`}
-                        >
-                            <SignUp />
-                        </div>
+        {/* Subtle Grid Pattern */}
+        <div
+          className="absolute inset-0 opacity-[0.02]"
+          style={{
+            backgroundImage: `linear-gradient(rgba(99, 102, 241, 0.1) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(99, 102, 241, 0.1) 1px, transparent 1px)`,
+            backgroundSize: "50px 50px",
+          }}
+        />
+      </div>
 
-                        {/* Email Verification */}
-                        <div
-                            className={`transition-all duration-200 ${
-                                mode === "signup" &&
-                                signUpStep === "verification"
-                                    ? "opacity-100 visible relative"
-                                    : "opacity-0 invisible absolute top-0 left-0 right-0 pointer-events-none"
-                            }`}
-                        >
-                            <EmailVerification
-                                email={signUpEmail}
-                                onVerify={handleEmailVerification}
-                                onBack={handleBackToSignUp}
-                                onResend={handleResendCode}
-                            />
-                        </div>
-                    </div>
-
-                    {/* Alternative action link - Hide during verification */}
-                    {signUpStep === "form" && (
-                        <div className="mt-6 text-center">
-                            <p className="text-sm text-muted-foreground">
-                                {mode === "signin"
-                                    ? "Don't have an account? "
-                                    : "Already have an account? "}
-                                <Button
-                                    type="button"
-                                    variant="link"
-                                    className="text-primary p-0 h-auto font-medium"
-                                    onClick={() => {
-                                        setMode(
-                                            mode === "signin"
-                                                ? "signup"
-                                                : "signin",
-                                        );
-                                        setSignUpStep("form");
-                                    }}
-                                >
-                                    {mode === "signin" ? "Sign up" : "Sign in"}
-                                </Button>
-                            </p>
-                        </div>
-                    )}
-                </div>
+      {/* Left Panel - Auth Form */}
+      <div className="w-full flex items-center justify-center p-6 lg:p-12 overflow-y-auto scrollbar-hide relative z-10">
+        <div className="w-full max-w-md">
+          {/* Logo & Header */}
+          <div className="mb-8">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
+                <Box className="w-7 h-7 text-primary-foreground" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-foreground">
+                  EventSync
+                </h1>
+                <p className="text-sm text-muted-foreground transition-all duration-300">
+                  {mode === "signin" ? "Welcome back" : "Create your account"}
+                </p>
+              </div>
             </div>
 
-            {/* Right Panel - Image/Illustration */}
-            {/*<div className="hidden lg:flex w-1/2 bg-muted/20 items-center justify-center p-12 border-l border-border">
-                <div className="w-full max-w-lg">
-                    <div className="aspect-square bg-card rounded-2xl border border-border shadow-xl flex items-center justify-center">
-                        <div className="text-center p-12">
-                            <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-primary/10 flex items-center justify-center">
-                                <Box className="w-16 h-16 text-primary" />
-                            </div>
-                            <h3 className="text-2xl font-bold text-foreground mb-2">
-                                Welcome to EventSync
-                            </h3>
-                            <p className="text-sm text-muted-foreground mb-8 transition-opacity duration-200">
-                                Transform your ideas into reality with our
-                                expert team.{" "}
-                                {mode === "signin"
-                                    ? "Sign in to continue your project journey."
-                                    : "Sign up to start your project journey."}
-                            </p>
-                            <div className="space-y-4 text-left">
-                                <div className="flex items-start gap-3">
-                                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                                        <span className="text-sm font-bold text-primary">
-                                            1
-                                        </span>
-                                    </div>
-                                    <div>
-                                        <p className="text-sm font-medium text-foreground">
-                                            Quick Setup
-                                        </p>
-                                        <p className="text-xs text-muted-foreground">
-                                            Get started in minutes
-                                        </p>
-                                    </div>
-                                </div>
-                                <div className="flex items-start gap-3">
-                                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                                        <span className="text-sm font-bold text-primary">
-                                            2
-                                        </span>
-                                    </div>
-                                    <div>
-                                        <p className="text-sm font-medium text-foreground">
-                                            Expert Team
-                                        </p>
-                                        <p className="text-xs text-muted-foreground">
-                                            Matched to your needs
-                                        </p>
-                                    </div>
-                                </div>
-                                <div className="flex items-start gap-3">
-                                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                                        <span className="text-sm font-bold text-primary">
-                                            3
-                                        </span>
-                                    </div>
-                                    <div>
-                                        <p className="text-sm font-medium text-foreground">
-                                            Quality Results
-                                        </p>
-                                        <p className="text-xs text-muted-foreground">
-                                            Delivered on time
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>*/}
+            {signUpStep === "form" && (
+              <div className="transition-all duration-300">
+                <h2 className="text-2xl font-bold text-foreground mb-2">
+                  {mode === "signin"
+                    ? "Sign in to your account"
+                    : "Start your journey"}
+                </h2>
+                <p className="text-sm text-muted-foreground">
+                  {mode === "signin"
+                    ? "Continue your journey with us"
+                    : "Join us and bring your ideas to life"}
+                </p>
+              </div>
+            )}
+          </div>
+
+          {/* Toggle between Sign In and Sign Up - Smooth Rounded */}
+          {signUpStep === "form" && (
+            <div className="flex gap-2 p-1.5 bg-muted/30 backdrop-blur-sm rounded-full mb-6 border border-border/50">
+              <button
+                type="button"
+                onClick={() => setMode("signin")}
+                className={`flex-1 py-3 px-6 rounded-full text-sm font-medium transition-all duration-500 ease-out ${
+                  mode === "signin"
+                    ? "bg-background text-foreground shadow-lg shadow-primary/10 border border-border/50 scale-105"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted/20 scale-100"
+                }`}
+              >
+                Sign In
+              </button>
+              <button
+                type="button"
+                onClick={() => setMode("signup")}
+                className={`flex-1 py-3 px-6 rounded-full text-sm font-medium transition-all duration-500 ease-out ${
+                  mode === "signup"
+                    ? "bg-background text-foreground shadow-lg shadow-primary/10 border border-border/50 scale-105"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted/20 scale-100"
+                }`}
+              >
+                Sign Up
+              </button>
+            </div>
+          )}
+
+          {/* Forms Container */}
+          <div className="relative">
+            {/* Sign In Form */}
+            <div
+              className={`transition-all duration-300 ${
+                mode === "signin" && signUpStep === "form"
+                  ? "opacity-100 visible relative"
+                  : "opacity-0 invisible absolute top-0 left-0 right-0 pointer-events-none"
+              }`}
+            >
+              <SignIn />
+            </div>
+
+            {/* Sign Up Form */}
+            <div
+              className={`transition-all duration-300 ${
+                mode === "signup" && signUpStep === "form"
+                  ? "opacity-100 visible relative"
+                  : "opacity-0 invisible absolute top-0 left-0 right-0 pointer-events-none"
+              }`}
+            >
+              <SignUp />
+            </div>
+
+            {/* Email Verification */}
+            <div
+              className={`transition-all duration-300 ${
+                mode === "signup" && signUpStep === "verification"
+                  ? "opacity-100 visible relative"
+                  : "opacity-0 invisible absolute top-0 left-0 right-0 pointer-events-none"
+              }`}
+            >
+              <EmailVerification
+                email={signUpEmail}
+                onVerify={handleEmailVerification}
+                onBack={handleBackToSignUp}
+                onResend={handleResendCode}
+              />
+            </div>
+          </div>
+
+          {/* Alternative action link */}
+          {signUpStep === "form" && (
+            <div className="mt-6 text-center">
+              <p className="text-sm text-muted-foreground">
+                {mode === "signin"
+                  ? "Don't have an account? "
+                  : "Already have an account? "}
+                <Button
+                  type="button"
+                  variant="link"
+                  className="text-primary p-0 h-auto font-medium hover:underline"
+                  onClick={() => {
+                    setMode(mode === "signin" ? "signup" : "signin");
+                    setSignUpStep("form");
+                  }}
+                >
+                  {mode === "signin" ? "Sign up" : "Sign in"}
+                </Button>
+              </p>
+            </div>
+          )}
         </div>
-    );
+      </div>
+    </div>
+  );
 }
