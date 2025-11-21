@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Box } from "lucide-react";
-import { SignInForm } from "./sign-in-form";
-import { SignUpForm } from "./sign-up-form";
+import SignIn from "./sign-in-form";
+import SignUp from "./sign-up-form";
 import { EmailVerification } from "./email-verification";
 import { Button } from "@/components/ui/button";
 
@@ -137,10 +137,7 @@ export function AuthLayout({ initialMode = "signin" }: AuthLayoutProps = {}) {
                                     : "opacity-0 invisible absolute top-0 left-0 right-0 pointer-events-none"
                             }`}
                         >
-                            <SignInForm
-                                onSubmit={handleSignIn}
-                                onGoogleSignIn={handleGoogleAuth}
-                            />
+                            <SignIn />
                         </div>
 
                         {/* Sign Up Form */}
@@ -151,10 +148,7 @@ export function AuthLayout({ initialMode = "signin" }: AuthLayoutProps = {}) {
                                     : "opacity-0 invisible absolute top-0 left-0 right-0 pointer-events-none"
                             }`}
                         >
-                            <SignUpForm
-                                onSubmit={handleSignUp}
-                                onGoogleSignUp={handleGoogleAuth}
-                            />
+                            <SignUp />
                         </div>
 
                         {/* Email Verification */}

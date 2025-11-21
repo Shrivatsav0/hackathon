@@ -18,7 +18,7 @@
 - Home
 - Events
 - Upcoming Events
-- Contact Us
+- Search bar
 
 --> Right:
 - Login
