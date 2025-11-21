@@ -177,7 +177,7 @@ export default function EventsPage() {
                     {filteredEvents.map((event) => (
                         <Card
                             key={event.id}
-                            className="backdrop-blur-sm bg-background/95 transition-all duration-300 hover:-translate-y-2 hover:shadow-lg hover:shadow-green-500/20 cursor-pointer"
+                            className="backdrop-blur-sm bg-background/95 transition-all duration-300 hover:-translate-y-2 hover:shadow-lg hover:shadow-blue-500/20 cursor-pointer"
                         >
                             <CardHeader>
                                 <div className="flex items-start justify-between">
@@ -189,7 +189,7 @@ export default function EventsPage() {
                                             {event.club}
                                         </CardDescription>
                                     </div>
-                                    <span className="text-xs px-2 py-1 rounded-full bg-green-500/10 text-green-500 border border-green-500/20">
+                                    <span className="text-xs px-2 py-1 rounded-full bg-blue-500/10 text-blue-500 border border-blue-500/20">
                                         {event.category}
                                     </span>
                                 </div>
@@ -216,7 +216,7 @@ export default function EventsPage() {
                                         </span>
                                     </div>
                                 </div>
-                                <Button className="w-full bg-green-500 hover:bg-green-600 text-white">
+                                <Button className="w-full bg-blue-500 hover:bg-blue-600 text-white">
                                     Register Now
                                 </Button>
                             </CardContent>
