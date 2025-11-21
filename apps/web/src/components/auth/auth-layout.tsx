@@ -74,25 +74,10 @@ export function AuthLayout({ initialMode = "signin" }: AuthLayoutProps = {}) {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background flex relative overflow-hidden">
-      {/* Subtle Animated Background */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Gradient Mesh */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-blue-500/5" />
-        <div className="absolute inset-0 bg-gradient-to-tl from-purple-500/5 via-transparent to-transparent" />
-
+    <div className="flex min-h-screen">
        
 
-        {/* Subtle Grid Pattern */}
-        <div
-          className="absolute inset-0 opacity-[0.02]"
-          style={{
-            backgroundImage: `linear-gradient(rgba(99, 102, 241, 0.1) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(99, 102, 241, 0.1) 1px, transparent 1px)`,
-            backgroundSize: "50px 50px",
-          }}
-        />
-      </div>
+        
 
       {/* Left Panel - Auth Form */}
       <div className="w-full flex items-center justify-center p-6 lg:p-12 overflow-y-auto scrollbar-hide relative z-10">
