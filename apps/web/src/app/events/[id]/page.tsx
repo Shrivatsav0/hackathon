@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+
 import {
     Card,
     CardContent,
@@ -105,14 +107,16 @@ export default function EventsPage() {
             event.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
             event.club.toLowerCase().includes(searchQuery.toLowerCase()) ||
             event.description.toLowerCase().includes(searchQuery.toLowerCase());
+
         const matchesCategory =
             selectedCategory === "all" || event.category === selectedCategory;
+
         return matchesSearch && matchesCategory;
     });
 
     return (
         <div className="relative min-h-screen overflow-hidden">
-            {/* Small Pixel Dots Background */}
+            {/* Background */}
             <div
                 className="absolute inset-0 opacity-40"
                 style={{
@@ -127,26 +131,21 @@ export default function EventsPage() {
                 }}
             />
 
-            {/* Blue Blur Gradient - Bottom Right */}
             <div className="absolute bottom-20 right-20 w-[600px] h-[300px] bg-blue-500/10 blur-[100px] rounded-full" />
-
-            {/* Blue Blur Gradient - Left Side */}
             <div className="absolute top-1/2 left-10 w-[400px] h-[400px] bg-blue-400/10 blur-[90px] rounded-full" />
 
             {/* Content */}
             <div className="relative flex-1 space-y-6 p-8 pt-6">
                 <div className="flex flex-col space-y-2">
-                    <h2 className="text-3xl font-bold tracking-tight">
-                        Browse Events
-                    </h2>
+                    <h2 className="text-3xl font-bold tracking-tight">Browse Events</h2>
                     <p className="text-muted-foreground">
                         Discover and register for upcoming college events
                     </p>
                 </div>
 
-                {/* Search and Filter Section */}
+                {/* Search + Filter */}
                 <div className="flex flex-col sm:flex-row gap-4">
-                    <div className="relative flex-1">
+                    <div className="relative flex-[3]">
                         <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                         <Input
                             placeholder="Search events, clubs, or keywords..."
@@ -155,72 +154,73 @@ export default function EventsPage() {
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
                     </div>
+
                     <Select
                         value={selectedCategory}
                         onValueChange={setSelectedCategory}
                     >
-                        <SelectTrigger className="w-[140px] backdrop-blur-sm bg-background/95">
+                        <SelectTrigger className="w-full sm:w-[160px] backdrop-blur-sm bg-background/95">
                             <SelectValue />
                         </SelectTrigger>
+
                         <SelectContent>
                             {categories.map((category) => (
                                 <SelectItem key={category} value={category}>
-                                    {category === "all" ? "All" : category}
+                                    {category === "all" ? "All Categories" : category}
                                 </SelectItem>
                             ))}
                         </SelectContent>
                     </Select>
                 </div>
 
-                {/* Events Grid */}
+                {/* Event Cards */}
                 <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                     {filteredEvents.map((event) => (
-                        <Card
-                            key={event.id}
-                            className="backdrop-blur-sm bg-background/95 transition-all duration-300 hover:-translate-y-2 hover:shadow-lg hover:shadow-blue-500/20 cursor-pointer"
-                        >
-                            <CardHeader>
-                                <div className="flex items-start justify-between">
-                                    <div className="space-y-1">
-                                        <CardTitle className="text-xl">
-                                            {event.name}
-                                        </CardTitle>
-                                        <CardDescription className="text-sm">
-                                            {event.club}
-                                        </CardDescription>
-                                    </div>
-                                    <span className="text-xs px-2 py-1 rounded-full bg-blue-500/10 text-blue-500 border border-blue-500/20">
-                                        {event.category}
-                                    </span>
-                                </div>
-                            </CardHeader>
-                            <CardContent className="space-y-4">
-                                <p className="text-sm text-muted-foreground">
-                                    {event.description}
-                                </p>
-                                <div className="space-y-2">
-                                    <div className="flex items-center text-sm">
-                                        <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
-                                        <span>
-                                            {event.date} • {event.time}
+                        <Link key={event.id} href={`/events/${event.id}` as any} className="block">
+                            <Card className="backdrop-blur-sm bg-background/95 transition-all duration-300 hover:-translate-y-2 hover:shadow-lg hover:shadow-green-500/20 cursor-pointer">
+                                <CardHeader>
+                                    <div className="flex items-start justify-between">
+                                        <div className="space-y-1">
+                                            <CardTitle className="text-xl">{event.name}</CardTitle>
+                                            <CardDescription>{event.club}</CardDescription>
+                                        </div>
+
+                                        <span className="text-xs px-2 py-1 rounded-full bg-green-500/10 text-green-500 border border-green-500/20">
+                                            {event.category}
                                         </span>
                                     </div>
-                                    <div className="flex items-center text-sm">
-                                        <MapPin className="h-4 w-4 mr-2 text-muted-foreground" />
-                                        <span>{event.location}</span>
+                                </CardHeader>
+
+                                <CardContent className="space-y-4">
+                                    <p className="text-sm text-muted-foreground">
+                                        {event.description}
+                                    </p>
+
+                                    <div className="space-y-2">
+                                        <div className="flex items-center text-sm">
+                                            <Calendar className="h-4 w-4 mr-2" />
+                                            <span>{event.date} • {event.time}</span>
+                                        </div>
+
+                                        <div className="flex items-center text-sm">
+                                            <MapPin className="h-4 w-4 mr-2" />
+                                            <span>{event.location}</span>
+                                        </div>
+
+                                        <div className="flex items-center text-sm">
+                                            <Users className="h-4 w-4 mr-2" />
+                                            <span>
+                                                {event.attendees}/{event.maxAttendees} registered
+                                            </span>
+                                        </div>
                                     </div>
-                                    <div className="flex items-center text-sm">
-                                        <Users className="h-4 w-4 mr-2 text-muted-foreground" />
-                                        <span>
-                                            {event.attendees}/{event.maxAttendees} registered
-                                        </span>
-                                    </div>
-                                </div>
-                                <Button className="w-full bg-blue-500 hover:bg-blue-600 text-white">
-                                    Register Now
-                                </Button>
-                            </CardContent>
-                        </Card>
+
+                                    <Button className="w-full bg-green-500 hover:bg-green-600 text-white">
+                                        View Event
+                                    </Button>
+                                </CardContent>
+                            </Card>
+                        </Link>
                     ))}
                 </div>
 
@@ -235,5 +235,3 @@ export default function EventsPage() {
         </div>
     );
 }
-
-
