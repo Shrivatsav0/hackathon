@@ -26,7 +26,7 @@ import {
 } from "lucide-react";
 import { getEventById } from "@/lib/data/events";
 import PageRenderer from "@/components/page-builder/page-renderer";
-import { PageDesign } from "@/lib/types/page-builder";
+import type { PageDesign } from "@/lib/types/page-builder";
 
 export default function EventDetailPage() {
     const params = useParams();

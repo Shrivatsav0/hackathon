@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
     Card,
     CardContent,
@@ -20,6 +21,7 @@ import { Calendar, MapPin, Users, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function EventsPage() {
+    const router = useRouter();
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("all");
 
@@ -109,6 +111,10 @@ export default function EventsPage() {
             selectedCategory === "all" || event.category === selectedCategory;
         return matchesSearch && matchesCategory;
     });
+
+    const handleNavigateToEvent = (eventId: number) => {
+        router.push(`/events/${eventId}`);
+    };
 
     return (
         <div className="relative min-h-screen">
@@ -217,10 +223,17 @@ export default function EventsPage() {
                                     </div>
                                 </div>
                                 <div className="flex gap-2">
-                                    <Button variant="outline" className="flex-1">
+                                    <Button 
+                                        variant="outline" 
+                                        className="flex-1"
+                                        onClick={() => handleNavigateToEvent(event.id)}
+                                    >
                                         Learn More
                                     </Button>
-                                    <Button className="flex-1 bg-blue-500 hover:bg-blue-600 text-white">
+                                    <Button 
+                                        className="flex-1 bg-blue-500 hover:bg-blue-600 text-white"
+                                        onClick={() => handleNavigateToEvent(event.id)}
+                                    >
                                         Register Now
                                     </Button>
                                 </div>
