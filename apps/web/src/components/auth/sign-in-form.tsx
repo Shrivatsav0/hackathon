@@ -88,6 +88,7 @@ export default function SignIn() {
                                 {
                                     email,
                                     password,
+                                    callbackURL: "/dashboard",
                                 },
                                 {
                                     onRequest: (ctx) => {

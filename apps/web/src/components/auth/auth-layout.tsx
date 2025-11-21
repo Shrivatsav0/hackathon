@@ -63,7 +63,7 @@ export function AuthLayout({ initialMode = "signin" }: AuthLayoutProps = {}) {
     return (
         <div className="min-h-screen bg-background flex">
             {/* Left Panel - Auth Form */}
-            <div className="w-full lg:w-1/2 flex items-center justify-center p-6 lg:p-12 overflow-y-auto scrollbar-hide">
+            <div className="w-full flex items-center justify-center p-6 lg:p-12 overflow-y-auto scrollbar-hide">
                 <div className="w-full max-w-md">
                     {/* Logo & Header */}
                     <div className="mb-8">
@@ -73,7 +73,7 @@ export function AuthLayout({ initialMode = "signin" }: AuthLayoutProps = {}) {
                             </div>
                             <div>
                                 <h1 className="text-2xl font-bold text-foreground">
-                                    ORBIT
+                                    EventSync
                                 </h1>
                                 <p className="text-sm text-muted-foreground transition-opacity duration-200">
                                     {mode === "signin"
@@ -198,7 +198,7 @@ export function AuthLayout({ initialMode = "signin" }: AuthLayoutProps = {}) {
             </div>
 
             {/* Right Panel - Image/Illustration */}
-            <div className="hidden lg:flex w-1/2 bg-muted/20 items-center justify-center p-12 border-l border-border">
+            {/*<div className="hidden lg:flex w-1/2 bg-muted/20 items-center justify-center p-12 border-l border-border">
                 <div className="w-full max-w-lg">
                     <div className="aspect-square bg-card rounded-2xl border border-border shadow-xl flex items-center justify-center">
                         <div className="text-center p-12">
@@ -206,7 +206,7 @@ export function AuthLayout({ initialMode = "signin" }: AuthLayoutProps = {}) {
                                 <Box className="w-16 h-16 text-primary" />
                             </div>
                             <h3 className="text-2xl font-bold text-foreground mb-2">
-                                Welcome to ORBIT
+                                Welcome to EventSync
                             </h3>
                             <p className="text-sm text-muted-foreground mb-8 transition-opacity duration-200">
                                 Transform your ideas into reality with our
@@ -265,7 +265,7 @@ export function AuthLayout({ initialMode = "signin" }: AuthLayoutProps = {}) {
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>*/}
         </div>
     );
 }
