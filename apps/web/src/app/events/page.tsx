@@ -158,7 +158,7 @@ export default function EventsPage() {
                                     </div>
                                 </div>
                                 <Button
-                                    className="w-full bg-blue-500 hover:bg-blue-600 text-white"
+                                    className="w-full bg-blue-500 hover:bg-blue-600 text-white "
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         router.push(
