@@ -81,30 +81,7 @@ export function AuthLayout({ initialMode = "signin" }: AuthLayoutProps = {}) {
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-blue-500/5" />
         <div className="absolute inset-0 bg-gradient-to-tl from-purple-500/5 via-transparent to-transparent" />
 
-        {/* Floating Orbs */}
-        {isMounted &&
-          animationData.map((data, i) => (
-            <div
-              key={i}
-              className="absolute rounded-full"
-              style={{
-                left: `${data.left}%`,
-                top: `${data.top}%`,
-                width: `${data.size}px`,
-                height: `${data.size}px`,
-                background: `radial-gradient(circle, ${
-                  i % 3 === 0
-                    ? "rgba(99, 102, 241, 0.1)"
-                    : i % 3 === 1
-                      ? "rgba(168, 85, 247, 0.08)"
-                      : "rgba(59, 130, 246, 0.08)"
-                } 0%, transparent 70%)`,
-                filter: "blur(40px)",
-                animation: `float ${data.duration}s ease-in-out infinite`,
-                animationDelay: `${data.delay}s`,
-              }}
-            />
-          ))}
+       
 
         {/* Subtle Grid Pattern */}
         <div
