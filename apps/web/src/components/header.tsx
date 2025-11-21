@@ -8,38 +8,40 @@ export default function Header() {
     const pathname = usePathname();
     const links = [
         { to: "/", label: "Home" },
-        { to: "/dashboard", label: "Dashboard" },
+        { to: "/events", label: "Events" },
+        { to: "/upcoming", label: "Upcoming Events" },
+        { to: "/contact", label: "Contact Us" },
     ] as const;
 
     return (
-        <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
             <div className="container mx-auto flex h-16 items-center justify-between px-4">
-                <nav className="flex items-center gap-6">
-                    <Link 
-                        href="/" 
-                        className="mr-6 flex items-center space-x-2 font-bold text-xl"
-                    >
-                        <span>Logo</span>
-                    </Link>
-                    <div className="hidden md:flex gap-6">
-                        {links.map(({ to, label }) => {
-                            const isActive = pathname === to;
-                            return (
-                                <Link
-                                    key={to}
-                                    href={to}
-                                    className={`text-sm font-medium transition-colors hover:text-primary ${
-                                        isActive
-                                            ? "text-foreground"
-                                            : "text-muted-foreground"
-                                    }`}
-                                >
-                                    {label}
-                                </Link>
-                            );
-                        })}
-                    </div>
+                <Link 
+                    href="/" 
+                    className="flex items-center space-x-2 font-bold text-xl"
+                >
+                    <span>EventSync</span>
+                </Link>
+                
+                <nav className="hidden md:flex gap-6">
+                    {links.map(({ to, label }) => {
+                        const isActive = pathname === to;
+                        return (
+                            <Link
+                                key={to}
+                                href={to}
+                                className={`text-sm font-medium transition-colors hover:text-primary ${
+                                    isActive
+                                        ? "text-foreground"
+                                        : "text-muted-foreground"
+                                }`}
+                            >
+                                {label}
+                            </Link>
+                        );
+                    })}
                 </nav>
+                
                 <div className="flex items-center gap-2">
                     <ThemeToggle />
                     <UserMenu />
